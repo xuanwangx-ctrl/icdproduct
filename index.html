@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ICD内容生产决策中枢</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <aside class="app-sidebar" aria-label="主导航">
+      <div class="app-sidebar-wrap">
+        <nav class="sidebar-scroll">
+          <div class="side-group">
+            <div class="side-group-head">
+              <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round" />
+              </svg>
+              <span class="side-group-title">综合</span>
+            </div>
+            <a href="#top" class="nav-item active" data-nav>工作台</a>
+          </div>
+
+          <div class="side-group">
+            <div class="side-group-head">
+              <svg class="side-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19V5M9 19V10M14 19v-6M19 19V8" stroke-linecap="round" />
+              </svg>
+              <span class="side-group-title">数据中心</span>
+            </div>
+            <a href="#section-target" class="nav-item" data-nav>目标预测及达成周期拆解</a>
+            <a href="#section-decompose" class="nav-item" data-nav>生产流程目标拆解</a>
+            <a href="#section-monitor" class="nav-item" data-nav>全流程监控</a>
+            <a href="#section-funnel" class="nav-item" data-nav>业务漏斗数据</a>
+          </div>
+        </nav>
+      </div>
+    </aside>
+
+    <div class="app-main" id="top">
+      <header class="main-header">
+        <div class="brand">
+          <svg class="brand-icon" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="icdBrandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1890FF" />
+                <stop offset="100%" stop-color="#096DD9" />
+              </linearGradient>
+            </defs>
+            <rect width="40" height="40" rx="10" fill="url(#icdBrandGrad)" />
+            <path fill="#fff" fill-opacity="0.95" d="M9 28V18h5v10H9zm8.5 0V12h5v16h-5zm8.5 0v-8h5v8h-5z" />
+            <circle cx="31" cy="13" r="3.5" fill="#fff" />
+            <path
+              d="M26 13.5c2-1.5 4.5-1.2 6.2 0.3"
+              stroke="#B3E0FF"
+              stroke-width="1.2"
+              stroke-linecap="round"
+              fill="none"
+            />
+          </svg>
+          <div class="brand-text">
+            <h1>ICD内容生产决策中枢</h1>
+            <div class="sub">目标测算，全局监控，策略干预 · 目标拆解 · 风险评估 · 全链路监控</div>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="header-icon-btn" title="账户" aria-label="账户">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M6 20v-1a6 6 0 0 1 12 0v1" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="main-body">
+        <div class="container">
+          <section class="module-section" id="section-target" aria-labelledby="m1-title">
+            <h2 class="section-title" id="m1-title">目标预测及达成周期拆解</h2>
+            <div class="module-row">
+              <div class="module-row-main card module-top">
+                <div class="card-head card-head--tools">
+                  <span class="chip chip-purple">周期目标</span>
+                </div>
+                <div class="top-target-grid">
+                  <div class="target-input-panel">
+                    <label class="field-label" for="targetType">目标类型</label>
+                    <select id="targetType" class="input-control">
+                      <option value="Revenue">期望季度收入（元）</option>
+                      <option value="Volume">期望上架专辑数（部）</option>
+                    </select>
+                    <label class="field-label" for="targetValue">目标数值</label>
+                    <input
+                      id="targetValue"
+                      class="input-control"
+                      type="number"
+                      min="0"
+                      step="10000"
+                      value="10000000"
+                      placeholder="输入目标"
+                    />
+                    <button type="button" id="btnApplyTarget" class="btn btn-primary">应用并测算</button>
+                    <div id="difficultyBox" class="difficulty-box" aria-live="polite">
+                      <p class="difficulty-title">达成难度评估</p>
+                      <p id="difficultyText" class="difficulty-result">—</p>
+                      <p id="difficultyDetail" class="difficulty-detail"></p>
+                    </div>
+                  </div>
+                  <div class="chart-wrap">
+                    <h3 class="chart-title">目标曲线 vs 产能预测（Gap）</h3>
+                    <canvas id="chartGap" height="220"></canvas>
+                    <p id="gapSummary" class="chart-caption"></p>
+                  </div>
+                </div>
+              </div>
+              <aside class="module-row-strategy" aria-labelledby="strategy-m1-title">
+                <div class="strategy-panel strategy-panel--inline">
+                  <div class="strategy-panel-head">
+                    <h2 id="strategy-m1-title">达成建议策略</h2>
+                    <span class="chip chip-green">目标层</span>
+                  </div>
+                  <p class="strategy-intro">结合目标难度与季度进度预测，给出目标与周期侧建议。</p>
+                  <div id="strategyCardsM1" class="strategy-cards"></div>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="module-section" id="section-decompose" aria-labelledby="m2-title">
+            <h2 class="section-title" id="m2-title">生产流程目标拆解</h2>
+            <div class="module-row">
+              <div class="module-row-main card module-decompose">
+                <div class="card-head card-head--tools">
+                  <span class="chip chip-orange">拆解参考线</span>
+                </div>
+                <p class="hint">
+                  与主漏斗一致：生成线索 → 版权跟进 → 入库版权 → 发单 → 接单 → 上架；子目标量 = 上架目标 ÷（五段转化率连乘）。可手动覆盖转化率，实时反推上游需求量。
+                </p>
+                <div class="decompose-layout">
+                  <div class="rates-editor" id="ratesEditor"></div>
+                  <div class="waterfall-wrap">
+                    <h3 class="chart-title">拆解瀑布流（万元 / 部 / 条）</h3>
+                    <div id="waterfallBars" class="waterfall-bars"></div>
+                    <div id="sankeyHint" class="sankey-hint"></div>
+                  </div>
+                </div>
+              </div>
+              <aside class="module-row-strategy" aria-labelledby="strategy-m2-title">
+                <div class="strategy-panel strategy-panel--inline">
+                  <div class="strategy-panel-head">
+                    <h2 id="strategy-m2-title">达成建议策略</h2>
+                    <span class="chip chip-green">拆解层</span>
+                  </div>
+                  <p class="strategy-intro">根据各环节转化率与反推结果，提示可调整的杠杆环节。</p>
+                  <div id="strategyCardsM2" class="strategy-cards"></div>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="module-section" id="section-monitor" aria-labelledby="m4-title">
+            <h2 class="section-title" id="m4-title">全流程监控</h2>
+            <div class="module-row">
+              <div class="module-row-main card module-monitor">
+                <div class="card-head card-head--tools">
+                  <span class="chip chip-muted">实际 vs 拆解目标</span>
+                </div>
+                <div class="monitor-chart-wrap">
+                  <canvas id="chartFunnel" height="280"></canvas>
+                </div>
+                <div id="gapAlerts" class="gap-alerts" aria-live="polite"></div>
+              </div>
+              <aside class="module-row-strategy" aria-labelledby="strategy-monitor-title">
+                <div class="strategy-panel strategy-panel--inline">
+                  <div class="strategy-panel-head">
+                    <h2 id="strategy-monitor-title">达成建议策略</h2>
+                    <span class="chip chip-green">监控层</span>
+                  </div>
+                  <p class="strategy-intro">当实际低于拆解目标时，按环节归因生成可执行策略（IF-THEN）。</p>
+                  <div id="strategyCardsMonitor" class="strategy-cards"></div>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="module-section" id="section-funnel" aria-labelledby="m5-title">
+            <h2 class="section-title" id="m5-title">业务漏斗数据</h2>
+            <div class="module-row">
+              <div class="module-row-main card module-prd-boards">
+                <div class="card-head card-head--tools">
+                  <span class="chip chip-muted">演示数据</span>
+                </div>
+                <div class="prd-tabs" role="tablist">
+                  <button type="button" class="prd-tab is-active" role="tab" aria-selected="true" data-tab="funnel-main">
+                    ① 线索流转漏斗
+                  </button>
+                  <button type="button" class="prd-tab" role="tab" aria-selected="false" data-tab="follow-copy">
+                    ② 版权跟进分布
+                  </button>
+                  <button type="button" class="prd-tab" role="tab" aria-selected="false" data-tab="production-flow">
+                    ③ 制作跟进子流程
+                  </button>
+                  <button type="button" class="prd-tab" role="tab" aria-selected="false" data-tab="album-post">
+                    ④ 上架专辑表现
+                  </button>
+                </div>
+                <div id="prdPanelFunnelMain" class="prd-panel is-visible" role="tabpanel" data-panel="funnel-main">
+                  <p class="prd-panel-desc">口径：2025-01-01 起天鉴线索 cohort，各节点为「至今累计」数量；占比与主漏斗表格一致。</p>
+                  <div class="prd-mini-table-wrap">
+                    <table class="prd-table" id="tableMainFunnel">
+                      <thead>
+                        <tr>
+                          <th>环节</th>
+                          <th>演示数量</th>
+                          <th>环比示意</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tbodyMainFunnel"></tbody>
+                    </table>
+                  </div>
+                </div>
+                <div id="prdPanelFollow" class="prd-panel" role="tabpanel" hidden data-panel="follow-copy">
+                  <p class="prd-panel-desc">跟进状态：待跟进、寻源中、已流失、暂不引入、确权中、谈判中、待入库等。</p>
+                  <div class="prd-bars" id="followStatusBars"></div>
+                </div>
+                <div id="prdPanelProd" class="prd-panel" role="tabpanel" hidden data-panel="production-flow">
+                  <p class="prd-panel-desc">
+                    入库版权 → 邀约 → 试音 → 入库到发单 → 接单 → 入库到上架（网文制作部承制）。
+                  </p>
+                  <div class="prd-bars" id="productionFlowBars"></div>
+                </div>
+                <div id="prdPanelAlbum" class="prd-panel" role="tabpanel" hidden data-panel="album-post">
+                  <p class="prd-panel-desc">天鉴 / 先验 vs 后验关联、低效专辑清单。</p>
+                  <div class="prd-matrix" id="priorPosteriorMatrix"></div>
+                </div>
+              </div>
+              <aside class="module-row-strategy" aria-labelledby="strategy-funnel-title">
+                <div class="strategy-panel strategy-panel--inline">
+                  <div class="strategy-panel-head">
+                    <h2 id="strategy-funnel-title">达成建议策略</h2>
+                    <span class="chip chip-green">业务漏斗</span>
+                  </div>
+                  <p class="strategy-intro">结合漏斗分布与后验表现，给出运营与选品侧动作建议。</p>
+                  <div id="strategyCardsFunnel" class="strategy-cards"></div>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="card card-adopted-log" aria-labelledby="adopted-title">
+            <h2 id="adopted-title" class="adopted-log-title">已采纳策略 / 生产计划单</h2>
+            <ul id="adoptedList" class="adopted-list"></ul>
+          </section>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
